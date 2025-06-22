@@ -14,10 +14,11 @@ class Player(Entity):
         self.offset_pos = list(SCREEN_CENTER)
         self.ox = self.offset_pos[0]
         self.oy = self.offset_pos[1]
-        self.walk_right_images = [pg.image.load(f"assets/images/Player/right/X-12L4 RW {i}.png") for i in range(0, 4)]
-        self.walk_left_images = [pg.image.load(f"assets/images/Player/left/X-12L4 LW {i}.png") for i in range(0, 4)]
-        self.walk_down_images = [pg.image.load(f"assets/images/Player/down/X-12L4 DW {i}.png") for i in range(0, 4)]
-        self.walk_up_images = [pg.image.load(f"assets/images/Player/up/X-12L4 UW {i}.png") for i in range(0, 4)]
+        self.walk_right_images = [pg.image.load(f"assets/images/Player/Walking/right/X-12L4 RW {i}.png") for i in range(0, 4)]
+        self.walk_left_images = [pg.image.load(f"assets/images/Player/Walking/left/X-12L4 LW {i}.png") for i in range(0, 4)]
+        self.walk_down_images = [pg.image.load(f"assets/images/Player/Walking/down/X-12L4 DW {i}.png") for i in range(0, 4)]
+        self.walk_up_images = [pg.image.load(f"assets/images/Player/Walking/up/X-12L4 UW {i}.png") for i in range(0, 4)]
+        self.fight_prefix = "assets/images/Player/Fighting/X_12L4 Fighting"
         self.image = pg.transform.smoothscale(self.walk_right_images[0], (self.rect.size[0]*0.75, self.rect.size[1]*1.5))
         self.current_frame = 0
         self.frame_interval = 200
@@ -26,13 +27,18 @@ class Player(Entity):
         self.moving_down = False
         self.moving_right = False
         self.moving_left = False
-        self.max_hp = 1000
+        self.max_hp = 100
         self.hp = self.max_hp
         self.gauge = 0
         self.gauge_max = 100
-        self.gauge_speed = 500
+        self.gauge_speed = 100
         self.armor = None
         self.weapon = None
+        self.has_key = False
+
+
+    def obtain_key(self):
+        self.has_key = True
 
     def equip_weapon(self, weapon: Weapon):
         self.weapon = weapon

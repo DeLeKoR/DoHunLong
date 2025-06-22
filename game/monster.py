@@ -17,6 +17,7 @@ class Monster(Entity):
         self.next_step_index = 0
         self.max_hp = 80
         self.hp = self.max_hp
+        self.damage = 15
         self.gauge = 0
         self.gauge_max = 100
         self.gauge_speed = 100
@@ -30,7 +31,7 @@ class Monster(Entity):
 
     def attack(self, target) -> bool:
         hit_chance = 0.6
-        damage = 15
+        damage = self.damage
         if random.random() <= hit_chance:
             if hasattr(target, "take_damage"):
                 return target.take_damage(damage)
@@ -93,9 +94,18 @@ class Monster(Entity):
             self.next_step_index = 0
 
     def move(self, player_cell):
-        # проверяем наличие пути к цели
+        # если пути нет или мы дошли до конца — перегенерируем цель и путь
         if not self.path or self.next_step_index >= len(self.path):
             self.get_target_cell()
+
+        # *** НОВОЕ: проверяем снова, вдруг путь короче ***
+        if not self.path or self.next_step_index >= len(self.path):
+            return   # не движемся в этом кадре
+
+        # получаем следующую клетку в пути
+        next_coords = self.path[self.next_step_index]
+        next_cell   = self.get_cell_by_cord(next_coords)
+        target_center = next_cell.rect.center
 
         # получаем следующую клетку в пути
         next_coords = self.path[self.next_step_index]
@@ -118,6 +128,8 @@ class Monster(Entity):
             vy = dy / dist * self.speed
             self.rect.x += vx
             self.rect.y += vy
+            if hasattr(self, "_update_dir"):
+                self._update_dir(vx, vy)
 
         # реагируем на игрока
         self.go_to_player(player_cell)
